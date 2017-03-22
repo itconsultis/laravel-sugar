@@ -13,8 +13,7 @@ const tasks = {};
 
 tasks.phpunit = () => {
   let cmd = './vendor/phpunit/phpunit/phpunit';
-  let args = ['--testsuite=unit'];
-  let cp = subprocess.spawn(cmd, args, {stdio: 'inherit'})
+  let cp = subprocess.spawn(cmd, {stdio: 'inherit'})
   return new P((resolve, reject) => {
     cp.on('error', resolve);
     cp.on('close', resolve);
