@@ -51,7 +51,7 @@ trait CacheConsumer /* implements CacheConsumerInterface */
      */
     protected function getDefaultCache(): CacheRepository
     {
-        return app('cache')->driver();
+        return app('cache');
     }
 
     /**
