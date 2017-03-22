@@ -102,9 +102,9 @@ class CachingBehaviorTest extends TestCase
      * @dataProvider emptyValues
      * @expectedException \UnexpectedValueException
      */
-    public function test_passes_if_createCacheKey_raises_UnexpectedValueException($id)
+    public function test_passes_if_createCacheKey_raises_UnexpectedValueException($empty)
     {
-        $this->model->id = $id;
+        $this->model->id = $empty;
         $this->model->createCacheKey();
     }
 }
