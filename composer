@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+source .env.default
+source .env
+
+BUILDBOX_CONTAINER="${PROJECT}_buildbox"
+
+docker exec -ti -u node $BUILDBOX_CONTAINER bash -c \
+    "composer -vvv --ignore-platform-reqs $*"
+

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+source .env
+docker exec -ti -u node -ti ${PROJECT}_buildbox bash -c "npm $*" 
+

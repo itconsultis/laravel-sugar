@@ -1,0 +1,21 @@
+variables:
+  COMPOSER_PROCESS_TIMEOUT: "900"
+
+stages:
+  - test
+
+cache:
+  key: $CI_PROJECT_ID
+  paths:
+    - vendor
+
+###########################################################################
+
+test-job:
+  stage: test
+  tags:
+    - buildbox-php:1.0.X
+  script:
+    - composer install --ignore-platform-reqs
+    - ./vendor/phpunit/phpunit/phpunit --testsuite=unit
+

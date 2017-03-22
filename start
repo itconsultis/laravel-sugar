@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# create the dotenv file if it doesn't exist
+if [ ! -f .env ]; then
+    source .env.default
+
+    if [ -z "${PROJECT+set}" ]; then
+        PROJECT="$(basename "$(pwd)")"
+        echo "PROJECT=$PROJECT" > /tmp/dotenv
+        cat .env.default >> /tmp/dotenv
+        mv /tmp/dotenv .env.default
+    fi
+
+    cp .env.default .env
+
+    echo "DOCKER_HOST_UID=$(id -u)" >> .env
+    echo "DOCKER_HOST_GID=$(id -g)" >> .env
+
+    echo "Created boilerplate .env file at:"
+    echo ""
+    echo "    $(pwd)/.env"
+    echo ""
+fi
+
+source .env.default
+source .env
+
+DOCKER_IMAGE=docker.it-consultis.com.cn/itc/buildbox-php:1.0.0
+BUILDBOX_CONTAINER="${PROJECT}_buildbox"
+
+mkdir -p $HOME/.composer/cache
+
+docker run \
+    -u node \
+    -d \
+    -ti \
+    -v $(pwd):/project \
+    -v $HOME/.composer:/var/lib/composer \
+    --env-file="$(pwd)/.env" \
+    --name="$BUILDBOX_CONTAINER" \
+    --workdir=/project \
+    $DOCKER_IMAGE \
+    bash -c "tail -f /dev/null"
+
+./npm install
+./composer install
+./gulp watch
+

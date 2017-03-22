@@ -1,0 +1,32 @@
+{
+    "name": "itc/laravel-sugar",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rich Choy",
+            "email": "rich.choy@it-consultis.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.0"
+    },
+    "require-dev": {
+        "laravel/framework": ">=5.3",
+        "phpunit/phpunit": "^6.0",
+        "mockery/mockery": "dev-master",
+        "josegonzalez/dotenv": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ITC\\Laravel\\Sugar\\": "src/Sugar"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "./tests/TestCase.php"
+        ]
+    }
+}

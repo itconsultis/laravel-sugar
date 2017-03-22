@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+source .env.default
+source .env
+
+BUILDBOX_CONTAINER="${PROJECT}_buildbox"
+
+docker rm -fv $(docker stop $BUILDBOX_CONTAINER)
+
