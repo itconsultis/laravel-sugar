@@ -17,5 +17,5 @@ test-job:
     - buildbox-php:1.0.X
   script:
     - composer install --ignore-platform-reqs
-    - ./vendor/phpunit/phpunit/phpunit --testsuite=unit
+    - ./vendor/phpunit/phpunit/phpunit
 
