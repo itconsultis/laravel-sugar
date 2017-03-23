@@ -73,8 +73,7 @@ trait Caching
 
     /**
      * Uncache the model instance
-     * @param int $ttl - cache TTL in seconds
-     * @param \Carbon\Carbon $now - this parameter facilitates unit tests
+     * @param void
      * @return static
      */
     public function forget(): Model
@@ -87,14 +86,14 @@ trait Caching
     }
 
     /**
-     * @see \ITC\Laravel\Sugar\Support\CacheConsumer::getCacheKeyTokens
+     * @overrides \ITC\Laravel\Sugar\Support\CacheConsumer::getCacheKeyTokens
      * @inheritdoc
      */
     protected function getCacheKeyTokens(): array
     {
         $id = $this->getKey();
         if (!$id) {
-            throw new UnexpectedValueException('model does not have an id');
+            throw new UnexpectedValueException('expected model to have an id');
         }
         return ['id', $this->getKey()];
     }
