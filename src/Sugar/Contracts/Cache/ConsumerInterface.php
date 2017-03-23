@@ -1,10 +1,10 @@
 <?php
 
-namespace ITC\Laravel\Sugar\Contracts;
+namespace ITC\Laravel\Sugar\Contracts\Cache;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
-interface CacheConsumerInterface
+interface ConsumerInterface
 {
     /**
      * @param \Illuminate\Contracts\Cache\Repository $cache
@@ -19,10 +19,11 @@ interface CacheConsumerInterface
     public function getCache(): CacheRepository;
 
     /**
-     * @param void
+     * @param string $tokens,... cache key tokens
      * @return string
+     * @throws \InvalidArgumentException
      */
-    public function createCacheKey(): string;
+    public function createCacheKey(...$tokens): string;
 
     /**
      * @param string[] $tags
@@ -35,4 +36,16 @@ interface CacheConsumerInterface
      * @return string[]
      */
     public function getCacheTags(): array;
+
+    /**
+     * @param void
+     * @return int
+     */
+    public function getDefaultCacheTtl(): int;
+
+    /**
+     * @param int $ttl
+     * @return static
+     */
+    public function setDefaultCacheTtl(int $ttl);
 }
