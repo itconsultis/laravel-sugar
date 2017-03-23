@@ -7,8 +7,8 @@
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
          verbose="true">
-    <testsuite name="models">
-        <directory suffix="Test.php">tests/models</directory>
+    <testsuite name="default">
+        <directory suffix="Test.php">tests</directory>
     </testsuite>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
