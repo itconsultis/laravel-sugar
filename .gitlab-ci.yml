@@ -14,7 +14,7 @@ cache:
 test-job:
   stage: test
   tags:
-    - buildbox-php:1.0.X
+    - buildbox-php:1.2.X
   script:
     - composer install --ignore-platform-reqs
     - ./vendor/phpunit/phpunit/phpunit

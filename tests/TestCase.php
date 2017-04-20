@@ -1,6 +1,6 @@
 <?php
 
-namespace ITC\Laravel\Sugar\Test;
+namespace ITC\Laravel\Sugar\Tests;
 
 use PHPUnit\Framework\TestCase as TestCaseBase;
 use Mockery;
@@ -23,6 +23,10 @@ abstract class TestCase extends TestCaseBase
         Mockery::close();
     }
 
+    /**
+     * @param void
+     * @return void
+     */
     protected function pass()
     {
         $this->assertTrue(true);

@@ -1,32 +1,14 @@
 <?php
 
-namespace ITC\Laravel\Sugar\Cache;
+namespace ITC\Laravel\Sugar\Cache\Behaviors;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use ITC\Laravel\Sugar\Serialization\Behaviors\GeneratesKeys;
+use Carbon\Carbon;
 
-trait Consumer
+trait ConsumesCache
 {
-    use KeyGenerator;
-
-    /**
-     * The cache key is derived from the return value
-     * @param string $tokens,...
-     * @return string[]
-     * @throws \UnexpectedValueException
-     */
-    abstract protected function getDefaultCacheKeyTokens(): array;
-
-    /**
-     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\ConsumerInterface
-     * @inheritdoc
-     */
-    public function createCacheKey(...$tokens): string
-    {
-        if (empty($tokens)) {
-            $tokens = $this->getDefaultCacheKeyTokens();
-        }
-        return static::createKey(...$tokens);
-    }
+    use GeneratesKeys;
 
     /**
      * @var \Illuminate\Contracts\Cache\Repository
@@ -114,4 +96,14 @@ trait Consumer
         return $this->__defaultCacheTtl;
     }
 
+    /**
+     * @param integer $ttl - seconds
+     * @param \Carbon\Carbon $now - for testing
+     * @return \Carbon\Carbon
+     */
+    public function createCacheExpiry(int $ttl=null, $now=null): Carbon
+    {
+        $ttl = $ttl ?? $this->getDefaultCacheTtl();
+        return ($now ?? Carbon::now())->addSeconds($ttl);
+    }
 }

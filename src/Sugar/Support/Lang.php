@@ -6,7 +6,7 @@ class Lang
 {
     /**
      * This function accepts an associative array and returns an array
-     * containing key-value pairs.
+     * containing key-value tuples.
      * ```php
      * $assoc = ['foo'=>1, 'bar'=>2];
      * $pairs = Lang::pairs($assoc);
@@ -16,7 +16,6 @@ class Lang
      */
     public static function pairs(array $assoc): array
     {
-        $sort = $sort ?? 'sort';
         $pairs = [];
         foreach ($assoc as $key => $value) {
             $pairs[] = [$key, $value];

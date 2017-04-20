@@ -20,12 +20,6 @@ class GeneratesKeysTest extends TestCase
         $this->consumer = new GeneratesKeysConsumer();
     }
 
-    public function test_passes_if_getKeyGenerator_returns_concrete_KeyGeneratorInterface()
-    {
-        $keygen = $this->consumer->getKeyGenerator();
-        $this->assertInstanceOf(KeyGeneratorInterface::class, $keygen);
-    }
-
     public function test_passes_if_createKey_does_not_raise_exception()
     {
         try {

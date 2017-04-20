@@ -9,32 +9,33 @@ use ReflectionClass;
 trait GeneratesKeys
 {
     /**
-     * @param void
-     * @return string
-     */
-    public function getKeyNamespace(): string
-    {
-        $refcls = new ReflectionClass($this);
-        return $refcls->getShortName();
-    }
-
-    /**
      * @param string $tokens,...
      * @return string
      */
     public function createKey(...$tokens): string
     {
-        return $this->getKeyGenerator()->createKey(...$tokens);
+        $keygen = $this->getKeyGenerator();
+        $keygen->setNamespace($this->getKeyNamespace());
+        return $keygen->createKey(...$tokens);
     }
+
+    /**
+     * @param void
+     * @return string
+     */
+    protected function getKeyNamespace(): string
+    {
+        $refcls = new ReflectionClass($this);
+        return $refcls->getShortName();
+    }
+
 
     /**
      * @param void
      * @return \ITC\Laravel\Sugar\Contracts\Serialization\KeyGeneratorInterface
      */
-    public function getKeyGenerator(): KeyGeneratorInterface
+    protected function getKeyGenerator(): KeyGeneratorInterface
     {
-        $keygen = new KeyGenerator();
-        $keygen->setNamespace($this->getKeyNamespace());
-        return $keygen;
+        return new KeyGenerator();
     }
 }
