@@ -45,7 +45,7 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
             }
         }
         else {
-            app('log')->debug('cache hit', [
+            app('log')->debug('HIT', [
                 'context' => __METHOD__,
                 'model' => get_class($this->model),
                 'key' => $key,
@@ -73,7 +73,7 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
             }
         }
         else {
-            app('log')->debug('cache hit', [
+            app('log')->debug('HIT', [
                 'context' => __METHOD__,
                 'model' => get_class($this->model),
                 'key' => $key,
@@ -101,7 +101,7 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
             }
         }
         else {
-            app('log')->debug('cache hit', [
+            app('log')->debug('HIT', [
                 'context' => __METHOD__,
                 'model' => get_class($this->model),
                 'key' => $key,
@@ -129,7 +129,7 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
             }
         }
         else {
-            app('log')->debug('cache hit', [
+            app('log')->debug('HIT', [
                 'context' => __METHOD__,
                 'model' => get_class($this->model),
                 'key' => $key,
@@ -163,7 +163,7 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
             $cache->put($key, $relation, $expiry);
         }
         else {
-            app('log')->debug('cache hit', [
+            app('log')->debug('HIT', [
                 'context' => __METHOD__,
                 'model' => get_class($this->model),
                 'key' => $key,
@@ -173,7 +173,6 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
         return $relation;
     }
 
-
     /**
      * @param \Illuminate\Database\Eloquent\Model $model
      * @return void
@@ -181,7 +180,9 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
      */
     protected function assertModelRequirements(Model $model)
     {
-        $kosher = $model instanceof CacheConsumerInterface;
+        $kosher = $model instanceof CacheConsumerInterface
+                  && method_exists($model, 'getTable');
+
         if (!$kosher) {
             $format = 'model %s must implement interface %s';
             throw new InvalidArgumentException(vsprintf($format, [
@@ -200,6 +201,11 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
         return 'model:'.$this->model->getTable();
     }
 
+    /**
+     * Return a concrete KeyGeneratorInterface
+     * @param void
+     * @return \ITC\Laravel\Sugar\Contracts\Serialization\KeyGeneratorInterface
+     */
     protected function getCacheKeyGenerator(): KeyGeneratorInterface
     {
         $keygen = app(KeyGeneratorInterface::class);
@@ -208,6 +214,7 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
     }
 
     /**
+     * Cache key hashing function for model and collections queries
      * @param string $prefix
      * @param array $ids
      * @param array $columns
@@ -221,7 +228,14 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
         return $this->getCacheKeyGenerator()->createKey($prefix, $precursor);
     }
 
-    protected function createRelationCacheKey(array $models, string $name, Closure $constraints)
+    /**
+     * Cache key hashing function for model relation queries
+     * @param array $models
+     * @param string $name - relation name
+     * @param Closure $contraints
+     * @return string
+     */
+    protected function createRelationCacheKey(array $models, string $name, Closure $constraints): string
     {
         $model_ids = array_map(function($model) {return $model->getKey();}, $models);
         $sconstraints = (new ClosureSerializer)->serialize($constraints);
