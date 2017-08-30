@@ -1,8 +1,8 @@
 <?php
 
-namespace ITC\Laravel\Sugar\Database\Model\Behaviors;
+namespace ITC\Laravel\Sugar\Eloquent\Model\Behaviors;
 
-use ITC\Laravel\Sugar\Database\Builder\CachingBuilder;
+use ITC\Laravel\Sugar\Eloquent\Builder\CachingBuilder;
 use ITC\Laravel\Sugar\Cache\Behaviors\ConsumesCache;
 
 trait Caching

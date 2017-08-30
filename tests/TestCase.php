@@ -2,10 +2,9 @@
 
 namespace ITC\Laravel\Sugar\Tests;
 
-use PHPUnit\Framework\TestCase as TestCaseBase;
 use Mockery;
 
-abstract class TestCase extends TestCaseBase
+abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
     /**
      * @inheritdoc

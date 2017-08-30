@@ -1,19 +1,20 @@
 <?php
 
-namespace ITC\Laravel\Sugar\Database\Builder;
+namespace ITC\Laravel\Sugar\Eloquent\Builder;
 
+use ReflectionClass;
+use InvalidArgumentException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use lluminate\Database\Eloquent\ModelNotFoundException;
 use ITC\Laravel\Sugar\Contracts\Cache\ConsumerInterface as CacheConsumerInterface;
 use ITC\Laravel\Sugar\Cache\Behaviors\ConsumesCache;
 use ITC\Laravel\Sugar\Serialization\Behaviors\GeneratesKeys;
-use InvalidArgumentException;
 
 class CachingBuilder extends Builder implements CacheConsumerInterface
 {
-    use ConsumesCache;
     use GeneratesKeys;
+    use ConsumesCache;
 
     /**
      * @overrides \Illuminate\Database\Eloquent\Builder
@@ -21,7 +22,7 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
      */
     public function setModel(Model $model)
     {
-        $this->checkModelRequirements($model);
+        $this->assertModelRequirements($model);
         return parent::setModel($model);
     }
 
@@ -31,20 +32,15 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
      */
     public function find($id, $columns=['*'])
     {
-        if (is_array($id)) {
-            return $this->findMany($id, $columns);
-        }
-        $cache = $this->getCache();
+        $cache = $this->model->getCache();
         $key = $this->createCacheKey('model', [$id], $columns);
+
         if (!$model = $cache->get($key)) {
             if ($model = parent::find($id, $columns)) {
-                $ttl = $this->model->getDefaultCacheTtl();
+                $ttl = $model->getCacheTimeout();
                 $expiry = $this->createCacheExpiry($ttl);
                 $cache->put($key, $model, $expiry);
             }
-        }
-        else {
-            app('log')->debug('cache hit on key '.$key);
         }
 
         return $model;
@@ -56,19 +52,16 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
      */
     public function findMany($ids, $columns=['*'])
     {
-        $cache = $this->getCache();
+        $cache = $this->model->getCache();
         $key = $this->createCacheKey('collection', $ids, $columns);
 
         if (!$collection = $cache->get($key)) {
             $collection = parent::findMany($ids, $columns);
-            if (!$collection->isEmpty()) {
-                $ttl = $this->model->getDefaultCacheTtl();
+            if ($collection->isNotEmpty()) {
+                $ttl = $this->model->getCacheTimeout();
                 $expiry = $this->createCacheExpiry($ttl);
                 $cache->put($key, $collection, $expiry);
             }
-        }
-        else {
-            app('log')->debug('cache hit on key '.$key);
         }
 
         return $collection;
@@ -86,13 +79,10 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
         if (!$model = $model->get($key)) {
             $model = parent::findOrNew($id, $columns);
             if ($model->exists) {
-                $ttl = $this->model->getDefaultCacheTtl();
+                $ttl = $this->model->getCacheTimeout();
                 $expiry = $this->createCacheExpiry($ttl);
                 $cache->put($key, $model, $expiry);
             }
-        }
-        else {
-            app('log')->debug('cache hit on key '.$key);
         }
 
         return $model;
@@ -103,28 +93,26 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function checkModelRequirements(Model $model)
+    protected function assertModelRequirements(Model $model)
     {
-        return;
-        // no-op
-        //$kosher = $model instanceof CacheConsumerInterface;
-        //if (!$kosher) {
-        //    $format = 'model %s must implement interface %s';
-        //    throw new InvalidArgumentException(vsprintf($format, [
-        //        get_class($model),
-        //        CacheConsumerInterface::class,
-        //    ]));
-        //}
+        $kosher = $model instanceof CacheConsumerInterface;
+        if (!$kosher) {
+            $format = 'model %s must implement interface %s';
+            throw new InvalidArgumentException(vsprintf($format, [
+                get_class($model),
+                CacheConsumerInterface::class,
+            ]));
+        }
     }
 
     /**
-     * @overrides \ITC\Laravel\Sugar\Serialization\Behaviors\GeneratesKeys
+     * @see \ITC\Laravel\Sugar\Serialization\Behaviors\GeneratesKeys
      * @inheritdoc
      */
     protected function getKeyNamespace(): string
     {
         $refcls = new ReflectionClass($this->model);
-        return 'Model:'.$refcls->getShortName();
+        return 'model:'.$refcls->getShortName();
     }
 
     /**

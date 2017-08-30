@@ -69,21 +69,30 @@ trait ConsumesCache
      */
     public function getCacheTags(): array
     {
-        return $this->__cacheTags ?? [];
+        return $this->__cacheTags ?? $this->getDefaultCacheTags();
+    }
+
+    /**
+     * @param void
+     * @return array
+     */
+    protected function getDefaultCacheTags(): array
+    {
+        return [];
     }
 
     /**
      * @var int
      */
-    private $__defaultCacheTtl = 0;
+    private $__cacheTimeout = 0;
 
     /**
      * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\ConsumerInterface
      * @inheritdoc
      */
-    public function setDefaultCacheTtl(int $ttl)
+    public function setCacheTimeout(int $ttl)
     {
-        $this->__defaultCacheTtl = $ttl;
+        $this->__cacheTimeout = $ttl;
         return $this;
     }
 
@@ -91,19 +100,33 @@ trait ConsumesCache
      * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\ConsumerInterface
      * @inheritdoc
      */
-    public function getDefaultCacheTtl(): int
+    public function getCacheTimeout(): int
     {
-        return $this->__defaultCacheTtl;
+        return $this->__cacheTimeout ?? $this->getDefaultCacheTimeout();
+    }
+
+    /**
+     * @param void
+     * @return int
+     */
+    protected function getDefaultCacheTimeout(): int
+    {
+        return 60;
     }
 
     /**
      * @param integer $ttl - seconds
-     * @param \Carbon\Carbon $now - for testing
+     * @param \Carbon\Carbon $now - facilitates testing
      * @return \Carbon\Carbon
      */
     public function createCacheExpiry(int $ttl=null, $now=null): Carbon
     {
-        $ttl = $ttl ?? $this->getDefaultCacheTtl();
+        $ttl = $ttl ?? $this->getDefaultCacheTimeout();
         return ($now ?? Carbon::now())->addSeconds($ttl);
+    }
+
+    public function createCacheKey(...$tokens)
+    {
+
     }
 }

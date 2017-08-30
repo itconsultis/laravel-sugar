@@ -36,6 +36,6 @@ trait GeneratesKeys
      */
     protected function getKeyGenerator(): KeyGeneratorInterface
     {
-        return new KeyGenerator();
+        return app(KeyGeneratorInterface::class);
     }
 }

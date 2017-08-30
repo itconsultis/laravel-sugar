@@ -19,13 +19,6 @@ interface ConsumerInterface
     public function getCache(): CacheRepository;
 
     /**
-     * @param string $tokens,... cache key tokens
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    public function createCacheKey(...$tokens): string;
-
-    /**
      * @param string[] $tags
      * @return static
      */
@@ -41,11 +34,11 @@ interface ConsumerInterface
      * @param void
      * @return int
      */
-    public function getDefaultCacheTtl(): int;
+    public function getCacheTimeout(): int;
 
     /**
      * @param int $ttl
      * @return static
      */
-    public function setDefaultCacheTtl(int $ttl);
+    public function setCacheTimeout(int $ttl);
 }
