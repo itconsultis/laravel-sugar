@@ -9,22 +9,29 @@ const paths = {
   php: ['./src/**/*.php', './tests/**/*.php'],
 };
 
-const tasks = {};
+const tasks = {
 
-tasks.phpunit = () => {
-  let cmd = './vendor/phpunit/phpunit/phpunit';
-  let cp = subprocess.spawn(cmd, {stdio: 'inherit'})
-  return new P((resolve, reject) => {
-    cp.on('error', resolve);
-    cp.on('close', resolve);
-  });
-};
+  phpunit: () => {
+    let cmd = './vendor/phpunit/phpunit/phpunit';
+    let cp = subprocess.spawn(cmd, {stdio: 'inherit'})
+    return new P((resolve, reject) => {
+      cp.on('error', resolve);
+      cp.on('close', resolve);
+    });
+  },
 
-tasks.watch = () => {
-  gulp.watch(paths.php, ['phpunit']);
-  return P.resolve();
+  phpdoc: () => {
+    return P.resolve();
+  },
+
+  watch: () => {
+    gulp.watch(paths.php, ['phpunit']);
+    return P.resolve();
+  },
+
 };
 
 gulp.task('phpunit', [], tasks.phpunit);
+gulp.task('phpdoc', [], tasks.phpdoc);
 gulp.task('watch', ['phpunit'], tasks.watch);
 gulp.task('default', ['watch']);

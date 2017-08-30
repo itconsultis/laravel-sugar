@@ -1,26 +1,17 @@
 <?php
 
-namespace ITC\Laravel\Sugar\Support;
+namespace ITC\Laravel\Sugar\Cache\Behaviors;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use ITC\Laravel\Sugar\Contracts\CacheConsumerInterface;
+use Carbon\Carbon;
 
-trait CacheConsumer /* implements CacheConsumerInterface */
+trait ConsumesCache
 {
-    use KeyGenerator;
-
-    /**
-     * The cache key is derived from the return value
-     * @param void
-     * @return string[]
-     * @throws \UnexpectedValueException
-     */
-    abstract protected function getCacheKeyTokens(): array;
 
     /**
      * @var \Illuminate\Contracts\Cache\Repository
      */
-    private $__cache;
+    private $__cache = null;
 
     /**
      * @satisfies \ITC\Laravel\Sugar\Contracts\CacheConsumerInterface
@@ -33,7 +24,7 @@ trait CacheConsumer /* implements CacheConsumerInterface */
     }
 
     /**
-     * @satisfies \ITC\Laravel\Sugar\Contracts\CacheConsumerInterface
+     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\CacheConsumerInterface
      * @inheritdoc
      */
     public function getCache(): CacheRepository
@@ -51,17 +42,7 @@ trait CacheConsumer /* implements CacheConsumerInterface */
      */
     protected function getDefaultCache(): CacheRepository
     {
-        return app('cache');
-    }
-
-    /**
-     * @satisfies \ITC\Laravel\Sugar\Contracts\CacheConsumerInterface
-     * @inheritdoc
-     */
-    public function createCacheKey(): string
-    {
-        $tokens = $this->getCacheKeyTokens();
-        return static::createKey(...$tokens);
+        return app(CacheRepository::class);
     }
 
     /**
@@ -71,7 +52,7 @@ trait CacheConsumer /* implements CacheConsumerInterface */
     private $__cacheTags = null;
 
     /**
-     * @satisfies \ITC\Laravel\Sugar\Contracts\CacheConsumerInterface
+     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\CacheConsumerInterface
      * @inheritdoc
      */
     public function setCacheTags(array $tags)
@@ -86,10 +67,7 @@ trait CacheConsumer /* implements CacheConsumerInterface */
      */
     public function getCacheTags(): array
     {
-        if ($this->__cacheTags === null) {
-            $this->__cacheTags = $this->getDefaultCacheTags();
-        }
-        return $this->__cacheTags;
+        return $this->__cacheTags ?? $this->getDefaultCacheTags();
     }
 
     /**
@@ -102,11 +80,46 @@ trait CacheConsumer /* implements CacheConsumerInterface */
     }
 
     /**
+     * @var int
+     */
+    private $__cacheTimeout = null;
+
+    /**
+     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\CacheConsumerInterface
+     * @inheritdoc
+     */
+    public function setCacheTimeout(int $ttl)
+    {
+        $this->__cacheTimeout = $ttl;
+        return $this;
+    }
+
+    /**
+     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\CacheConsumerInterface
+     * @inheritdoc
+     */
+    public function getCacheTimeout(): int
+    {
+        return $this->__cacheTimeout ?? $this->getDefaultCacheTimeout();
+    }
+
+    /**
      * @param void
      * @return int
      */
-    protected function getDefaultCacheTtl(): int
+    protected function getDefaultCacheTimeout(): int
     {
-        return 300; // seconds
+        return 60;
+    }
+
+    /**
+     * @param integer $ttl - seconds
+     * @param \Carbon\Carbon $now - facilitates testing
+     * @return \Carbon\Carbon
+     */
+    public function createCacheExpiry(int $ttl=null, $now=null): Carbon
+    {
+        $ttl = $ttl ?? $this->getDefaultCacheTimeout();
+        return ($now ?? Carbon::now())->addSeconds($ttl);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace ITC\Laravel\Sugar\Contracts;
+namespace ITC\Laravel\Sugar\Contracts\Cache;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
@@ -19,12 +19,6 @@ interface CacheConsumerInterface
     public function getCache(): CacheRepository;
 
     /**
-     * @param void
-     * @return string
-     */
-    public function createCacheKey(): string;
-
-    /**
      * @param string[] $tags
      * @return static
      */
@@ -35,4 +29,16 @@ interface CacheConsumerInterface
      * @return string[]
      */
     public function getCacheTags(): array;
+
+    /**
+     * @param void
+     * @return int
+     */
+    public function getCacheTimeout(): int;
+
+    /**
+     * @param int $ttl
+     * @return static
+     */
+    public function setCacheTimeout(int $ttl);
 }
