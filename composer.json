@@ -25,10 +25,5 @@
         "psr-4": {
             "ITC\\Laravel\\Sugar\\": "src/Sugar"
         }
-    },
-    "autoload-dev": {
-        "classmap": [
-            "./tests/TestCase.php"
-        ]
     }
 }
