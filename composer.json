@@ -11,13 +11,14 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.0",
+        "laravel/framework": ">=5.4",
+        "symfony/var-dumper": "3.2.6"
     },
     "require-dev": {
-        "laravel/framework": ">=5.3",
         "phpunit/phpunit": "^6.0",
-        "mockery/mockery": "dev-master",
-        "josegonzalez/dotenv": "^3.0"
+        "mockery/mockery": "dev-master#d1d330595a113fb2ed40bed22411af2327762f8d",
+        "josegonzalez/dotenv": "^3.1"
     },
     "autoload": {
         "psr-4": {
