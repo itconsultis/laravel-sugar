@@ -25,17 +25,15 @@ fi
 source .env.default
 source .env
 
-DOCKER_IMAGE=docker.it-consultis.com.cn/itc/buildbox-php:1.2.0
+DOCKER_IMAGE=docker.it-consultis.com.cn/itc/buildbox-php:2.5.1
 BUILDBOX_CONTAINER="${PROJECT}_buildbox"
 
 mkdir -p $HOME/.composer/cache
 
 docker run \
-    -u node \
-    -d \
-    -ti \
+    -u node -d  -ti \
     -v $(pwd):/project \
-    -v $HOME/.composer:/var/lib/composer \
+    -v $HOME/.composer/cache:/home/node/.composer/cache \
     --env-file="$(pwd)/.env" \
     --name="$BUILDBOX_CONTAINER" \
     --workdir=/project \
