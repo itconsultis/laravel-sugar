@@ -240,6 +240,6 @@ class CachingBuilder extends Builder implements CacheConsumerInterface
         $model_ids = array_map(function($model) {return $model->getKey();}, $models);
         $sconstraints = (new ClosureSerializer)->serialize($constraints);
         $precursor = implode(',', $model_ids).':'.$sconstraints;
-        return $this->getCacheKeyGenerator()->createKey('relation', $precursor);
+        return $this->getCacheKeyGenerator()->createKey('related', $name, $precursor);
     }
 }
