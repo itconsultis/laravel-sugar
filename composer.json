@@ -13,7 +13,8 @@
     "require": {
         "php": ">=7.0",
         "laravel/framework": ">=5.4",
-        "symfony/var-dumper": "3.2.6"
+        "symfony/var-dumper": "3.2.6",
+        "jeremeamia/SuperClosure": "^2.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.0",

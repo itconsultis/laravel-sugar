@@ -4,7 +4,7 @@ namespace ITC\Laravel\Sugar\Contracts\Cache;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
-interface ConsumerInterface
+interface CacheConsumerInterface
 {
     /**
      * @param \Illuminate\Contracts\Cache\Repository $cache

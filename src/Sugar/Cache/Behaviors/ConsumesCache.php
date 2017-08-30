@@ -3,12 +3,10 @@
 namespace ITC\Laravel\Sugar\Cache\Behaviors;
 
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use ITC\Laravel\Sugar\Serialization\Behaviors\GeneratesKeys;
 use Carbon\Carbon;
 
 trait ConsumesCache
 {
-    use GeneratesKeys;
 
     /**
      * @var \Illuminate\Contracts\Cache\Repository
@@ -26,7 +24,7 @@ trait ConsumesCache
     }
 
     /**
-     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\ConsumerInterface
+     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\CacheConsumerInterface
      * @inheritdoc
      */
     public function getCache(): CacheRepository
@@ -54,7 +52,7 @@ trait ConsumesCache
     private $__cacheTags = null;
 
     /**
-     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\ConsumerInterface
+     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\CacheConsumerInterface
      * @inheritdoc
      */
     public function setCacheTags(array $tags)
@@ -84,10 +82,10 @@ trait ConsumesCache
     /**
      * @var int
      */
-    private $__cacheTimeout = 0;
+    private $__cacheTimeout = null;
 
     /**
-     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\ConsumerInterface
+     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\CacheConsumerInterface
      * @inheritdoc
      */
     public function setCacheTimeout(int $ttl)
@@ -97,7 +95,7 @@ trait ConsumesCache
     }
 
     /**
-     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\ConsumerInterface
+     * @satisfies \ITC\Laravel\Sugar\Contracts\Cache\CacheConsumerInterface
      * @inheritdoc
      */
     public function getCacheTimeout(): int
@@ -123,10 +121,5 @@ trait ConsumesCache
     {
         $ttl = $ttl ?? $this->getDefaultCacheTimeout();
         return ($now ?? Carbon::now())->addSeconds($ttl);
-    }
-
-    public function createCacheKey(...$tokens)
-    {
-
     }
 }
